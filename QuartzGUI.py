@@ -20,7 +20,8 @@ try:
 except:
 	nicks = []
 def joinaction(sk):
-	sk.send(libicraft.minemsg("QuartzGUI Alpha Minecraft Tester"))
+	time.sleep(1)
+	sk.send(libicraft.minemsg("/spawn"))
 	pass
 def picknickname():
 	if nicks != []:
@@ -40,7 +41,7 @@ def action(sk):
 			sk.send(libicraft.creativedrop())
 		if app.b == True:
 			sk.send(libicraft.minemsg("".join(random.choice(string.letters+string.digits) for x in range(random.randint(1,100)))))
-		if app.a == True:
+		if app.y == True:
 			sk.send(libicraft.minemsg("§k"+"".join(random.choice(string.letters+string.digits) for x in range(random.randint(1,50)))))
 class App:
 
@@ -72,6 +73,7 @@ class App:
 	 self.b = False
 	 self.k = False
 	 self.i = False
+	 self.y = False
 	 self.a = True
     def rf(self):
 	if self.b == False:
@@ -81,11 +83,11 @@ class App:
 		self.b = False
 		self.buttonb["text"]="Start Random Flood"
     def rd(self):
-	if self.a == False:
-		self.a = True
+	if self.y == False:
+		self.y = True
 		self.buttonc["text"]="Stop Changing Flood"
 	else:
-		self.a = False
+		self.y = False
 		self.buttonc["text"]="Start Changing Flood"
     def quita(self):
 	if self.i == False:
