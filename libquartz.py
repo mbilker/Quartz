@@ -2,7 +2,7 @@
 stopmii = True
 debug=False
 localThread=False
-onlyLocal = True
+onlyLocal = False
 import libicraft, sys, random, time, socks, socket, threading, struct, binascii, re, string, libcraftpacket, os, KThreads
 prepend="Qtz_"
 timesleep=0
