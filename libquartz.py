@@ -3,7 +3,7 @@ stopmii = True
 debug=False
 localThread=False
 onlyLocal = False
-import libicraft, sys, random, time, socks, socket, threading, struct, binascii, re, string, libcraftpacket, os
+import libicraft, sys, random, time, socks, socket, threading, struct, binascii, re, string, libcraftpacket, os, KThreads
 prepend="Qtz_"
 timesleep=0
 exitApp=False
@@ -17,6 +17,7 @@ def threadEntry(proxied,pnick,action,joinaction, target, x):
 		prox = ""
 		tries = 30
 		while proxied == "True":
+			action(None)
 			if stopmii == False:
 			    return
 			if tries == 0:
@@ -24,6 +25,7 @@ def threadEntry(proxied,pnick,action,joinaction, target, x):
 			tries = tries - 1
 			if exitApp:
 				return
+			action(None)
 			choosenproxy=random.choice(proxies).replace("\n","")
 			prox=libicraft.parse_ip(choosenproxy)
 			break
@@ -56,9 +58,12 @@ def threadEntry(proxied,pnick,action,joinaction, target, x):
 					pass
 				sk.connect((target['ip'], target['port']))
 				nick=pnick()
+				action(None)
 				if localThread == False:
 					print("[+] Connected! [" + choosenproxy + "||"+nick+"]")
+				action(None)
 				sk.send(libicraft.join(nick))
+				action(None)
 				sk.send(libicraft.minemsg("/register omfg1336"))
 				sk.send(libicraft.minemsg("/login omfg1336"))
 				joinaction(sk)
@@ -91,43 +96,24 @@ def threadEntry(proxied,pnick,action,joinaction, target, x):
 print("[i] Welcome to Quartz")
 print("[i] Quartz was made by qwertyoruiop to benchmark Minecraft servers")
 print("[i] Please don't abuse it!")
-def spawnThreads(k,pnick,action,joinaction, target,y):
-		try:
-		 while True:
-			th = list()
-			x = 0
-			while True:
-				if stopmii == False:
-					return
-				t=threading.Thread(target=threadEntry, args=("True",pnick,action,joinaction, target,""))
-				t.start()
-				time.sleep(1)
-				th.append( t )
-				x = x + 1
-			for f in th:
-				f._Thread__stop()
-		except KeyboardInterrupt:
-			exitApp=True
-			raise
-		sys.exit()
-def threadRespawn(a,pnick,action,joinaction, target, b):
+def threadRespawn(a,pnick,action,joinaction, target, kact, b):
 		while True:
 			if stopmii == False:
 				return
-			print "[+] Starting a queue"
-			t=threading.Thread(target=spawnThreads, args=("LOL", pnick,action,joinaction, target, None))
+			t=KThreads.KThread(target=threadEntry, args=("True", pnick,action,joinaction, target, None))
 			t.start()
-			time.sleep(1)
-def start(pnick, action, joinaction, target):
+			kact()
+def start(pnick, action, joinaction, target, kact):
 	target = libicraft.parse_ip(target)
 	if localThread:
-		threading.Thread(target=threadEntry, args=("False",pnick,action,joinaction, target,"")).start()
-	if onlyLocal == False:
-		t=threading.Thread(target=threadRespawn, args=("LOL", pnick,action,joinaction, target, None))
-		t.start()
+		KThreads.KThread(target=threadEntry, args=("False",pnick,action,joinaction, target,"")).start()
 	else:
-	      t=threading.Thread(target=threadEntry, args=("False",pnick,action,joinaction, target,""))
-	      t.start()
+		if onlyLocal == False:
+			t=KThreads.KThread(target=threadRespawn, args=("LOL", pnick,action,joinaction, target, kact, kact))
+			t.start()
+		else:
+			t=KThreads.KThread(target=threadEntry, args=("False",pnick,action,joinaction, target,""))
+			t.start()
 	while True:
 		try:
 			strtosay = raw_input()
