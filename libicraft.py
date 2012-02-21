@@ -1,3 +1,4 @@
+import struct, random
 ids = [46,49,7,57,322]
 def stringify(text):
         msg = "\x00" + "\x00".join(list(text))
@@ -16,7 +17,7 @@ def join(nickname):
 	return handshake(nickname)+login(nickname)
 
 def creativedrop():
-	return "\x6B" + struct.pack('>h', -1) +  struct.pack('>h', random.choice(ids)) + "\x40\x00\x00"
+	return "\x6B\xFF\xFF" + struct.pack('>h', random.choice(ids)) + "\x40\x00\x00"
 
 def get_info(s):
 	s.send('\xfe')
